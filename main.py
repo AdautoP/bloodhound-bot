@@ -17,10 +17,10 @@ async def on_ready():
     print(client.user.id)
     print('------')
 
-@client.event
-async def on_raw_reaction_add(payload):
-    channel = client.get_channel(payload.channel_id)
-    await channel.send("Emoji: {}".format(payload.emoji.name))
+# @client.event
+# async def on_raw_reaction_add(payload):
+#     channel = client.get_channel(payload.channel_id)
+#     await channel.send("Emoji: {}".format(payload.emoji.name))
 
 @client.command(pass_context = True)
 async def register(ctx, platform, nickname):

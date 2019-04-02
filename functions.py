@@ -32,24 +32,12 @@ async def pushNewNickname(discord_id,origin_nickname,platform):
         #
 
 def getLevelRoleToAdd(level,server):
-    if server.id == serverID:
-        for i in server.roles:
-            if("-" in i.name):
-                array = i.name.split("-")
-                if array[0].isdigit() and array[1].isdigit():
-                    if(level>= int(array[0]) and level <int(array[1])):
-                        return i
-            else:
-                if("Lenda" in i.name):
-                    if(level >= 100):
-                        return i
-    else:
-        for i in server.roles:
-            if("-" in i.name):
-                array = i.name.split("-")
-                if array[0].isdigit() and array[1].isdigit():
-                    if(level>= int(array[0]) and level <int(array[1])):
-                        return i
+    for i in server.roles:
+        if("-" in i.name):
+            array = i.name.split("-")
+            if array[0].isdigit() and array[1].isdigit():
+                if(level>= int(array[0]) and level <int(array[1])):
+                    return i
 
 def getRolesToRemove(roles):
     rolesToRemove = []
