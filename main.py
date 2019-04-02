@@ -90,7 +90,7 @@ async def check_level(ctx, platform, nickname):
         json = request.json()
         if "data" in json:
             level = int(json["data"]["stats"][0]["value"])
-            if ctx.message.server.region == discord.VoiceRegion.brazil:
+            if ctx.message.guild.region == discord.VoiceRegion.brazil:
                 await ctx.channel.send("{0.mention}, O level de {1} é {2}.".format(ctx.message.author,nickname,level))
             else:
                 await ctx.channel.send("{0.mention}, {1} is level {2}.".format(ctx.message.author,nickname,level))
