@@ -24,7 +24,7 @@ async def on_ready():
 
 @client.command(pass_context = True)
 async def register(ctx, platform, nickname):
-    if "level" in ctx.message.channel.name:
+    if channelName in ctx.message.channel.name:
         if ctx.message.guild.region == discord.VoiceRegion.brazil:
             await ctx.channel.send("{0.mention}, Registrando seu nickname e plataforma no banco de dados para uso futuro.".format(ctx.message.author))
         else:
@@ -40,7 +40,7 @@ async def register(ctx, platform, nickname):
 
 @client.command(pass_context = True)
 async def lvl(ctx, platform = "pc",nickname = None):
-    if "level" in ctx.message.channel.name:
+    if channelName in ctx.message.channel.name:
         if ctx.message.guild.region == discord.VoiceRegion.brazil:
             await ctx.channel.send("{0.mention}, Pesquisando seu level".format(ctx.message.author))
         else:
@@ -75,7 +75,7 @@ async def lvl(ctx, platform = "pc",nickname = None):
 
 @client.command(pass_context = True)
 async def kills(ctx, platform = "pc", nickname = None):
-    if "level" in ctx.message.channel.name:
+    if channelName in ctx.message.channel.name:
         if ctx.message.guild.region == discord.VoiceRegion.brazil:
             await ctx.channel.send("{0.mention}, Pesquisando suas kills.".format(ctx.message.author))
         else:
@@ -111,7 +111,7 @@ async def kills(ctx, platform = "pc", nickname = None):
 
 @client.command(pass_context = True)
 async def check_level(ctx, platform, nickname):
-    if "level" in ctx.message.channel.name:
+    if channelName in ctx.message.channel.name:
         platformID = getPlatformId(platform)
         if ctx.message.guild.region == discord.VoiceRegion.brazil:
             await ctx.channel.send("{0.mention}, Pesquisando o level de **{1}**.".format(ctx.message.author,nickname))
@@ -139,7 +139,7 @@ async def check_level(ctx, platform, nickname):
 
 @client.command(pass_context = True)
 async def check_kills(ctx, platform, nickname):
-    if "level" in ctx.message.channel.name:
+    if channelName in ctx.message.channel.name:
         platformID = getPlatformId(platform)
         if ctx.message.guild.region == discord.VoiceRegion.brazil:
             await ctx.channel.send("{0.mention}, Pesquisando as kills de **{1}**.".format(ctx.message.author,nickname))
