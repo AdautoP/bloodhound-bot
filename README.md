@@ -2,6 +2,7 @@
 * Create one channel with "level" (without commas) in it's name. My bot only accepts commands sent in channels that contains level in it's name, commands in other channels will be deleted automatically(If you give it permissions to see and delete messages in the other channels ofc).
 * It's best if you create roles for level ranges, so the !lvl command will work on your server too. You can create any level range roles, but they should be formatted as X-X being X the numbers of the levels. (Example of role names: "0-10", "10-20", "20-30", "1-3", "99-100", "200-300")
 * If you don't want to auto-role, you can just ignore the !lvl command. Or just use the !check_level command to check on member level then manually role him or whatever you want.
+* There is a new function called !kills that also auto-roles but FOR NOW it only auto-roles if you create a role called "10 + K/L" but i'll work to make it work for all roles you create that has "K/L" in it.
 * [Add Bot to Server](https://discordapp.com/api/oauth2/authorize?client_id=547439065801162763&permissions=0&scope=bot)
 
 # Functions:
