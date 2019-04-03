@@ -31,9 +31,9 @@ async def register(ctx, platform, nickname):
             await ctx.channel.send("{0.mention}, Registering your nickname and platform on the database for future use.".format(ctx.message.author))
         await pushNewNickname(ctx.message.author.id,nickname,platform)
         if ctx.message.guild.region == discord.VoiceRegion.brazil:
-            await ctx.channel.send("{0.mention}, Registrado! Agora pode usar o comando !lvl sem especificar plataforma e nickname.".format(ctx.message.author))
+            await ctx.channel.send("{0.mention}, Registrado! Agora pode usar o comando **!lvl** e o comando **!kills** sem especificar plataforma e nickname.".format(ctx.message.author))
         else:
-            await ctx.channel.send("{0.mention}, Registered! Now you can use the !lvl command without specifying platform and nickname.".format(ctx.message.author))
+            await ctx.channel.send("{0.mention}, Registered! Now you can use the **!lvl** and **!kills** commands without specifying platform and nickname.".format(ctx.message.author))
     else:
         await ctx.message.delete()
 
@@ -46,18 +46,18 @@ async def lvl(ctx, platform = "pc",nickname = None):
         else:
             await ctx.channel.send("{0.mention}, Searching your level".format(ctx.message.author))
         if nickname is not None:
-            await autorole(ctx,nickname,platform)    
+            await levelAutoRole(ctx,nickname,platform)    
         else:
             user = await getUser(ctx.message.author.id)
             print(user)
             if user is not None:
-                await autorole(ctx,user["origin_nickname"],user["platform"])
+                await levelAutoRole(ctx,user["origin_nickname"],user["platform"])
             else:
                 if ctx.message.guild.region == discord.VoiceRegion.brazil:
                     await ctx.channel.send("{0.mention}, Usuário não registrado.".format(ctx.message.author))
                     embed = discord.Embed(
                         title = "Escreva esse comando para registrar seu nickname e plataforma:",
-                        description = "!register PLATAFORMA NICKNAME, Exemplo: !register pc NRG_dizzy",
+                        description = "**!register PLATAFORMA NICKNAME**, Exemplo: !register pc NRG_dizzy",
                         colour = discord.Colour.red()
                     )
                     await ctx.channel.send(embed = embed)
@@ -65,7 +65,7 @@ async def lvl(ctx, platform = "pc",nickname = None):
                     await ctx.channel.send("{0.mention}, User not registered".format(ctx.message.author))
                     embed = discord.Embed(
                         title = "Write this command to register your nickname and platform:",
-                        description = "!register PLATFORM NICKNAME, Example: !register pc NRG_dizzy",
+                        description = "**!register PLATFORM NICKNAME**, Example: !register pc NRG_dizzy",
                         colour = discord.Colour.red()
                     )
                     await ctx.channel.send(embed = embed)
@@ -74,13 +74,49 @@ async def lvl(ctx, platform = "pc",nickname = None):
         await ctx.message.delete()
 
 @client.command(pass_context = True)
+async def kills(ctx, platform = "pc", nickname = None):
+    if "level" in ctx.message.channel.name:
+        if ctx.message.guild.region == discord.VoiceRegion.brazil:
+            await ctx.channel.send("{0.mention}, Pesquisando suas kills.".format(ctx.message.author))
+        else:
+            await ctx.channel.send("{0.mention}, Searching your kills.".format(ctx.message.author))
+        if nickname is not None:
+            await killsAutoRole(ctx,nickname,platform)    
+        else:
+            user = await getUser(ctx.message.author.id)
+            print(user)
+            if user is not None:
+                await killsAutoRole(ctx,user["origin_nickname"],user["platform"])
+            else:
+                if ctx.message.guild.region == discord.VoiceRegion.brazil:
+                    await ctx.channel.send("{0.mention}, Usuário não registrado.".format(ctx.message.author))
+                    embed = discord.Embed(
+                        title = "Escreva esse comando para registrar seu nickname e plataforma:",
+                        description = "**!register PLATAFORMA NICKNAME**, Exemplo: !register pc NRG_dizzy",
+                        colour = discord.Colour.red()
+                    )
+                    await ctx.channel.send(embed = embed)
+                else:
+                    await ctx.channel.send("{0.mention}, User not registered".format(ctx.message.author))
+                    embed = discord.Embed(
+                        title = "Write this command to register your nickname and platform:",
+                        description = "**!register PLATFORM NICKNAME**, Example: !register pc NRG_dizzy",
+                        colour = discord.Colour.red()
+                    )
+                    await ctx.channel.send(embed = embed)
+    else:
+        await ctx.message.delete()
+
+
+
+@client.command(pass_context = True)
 async def check_level(ctx, platform, nickname):
     if "level" in ctx.message.channel.name:
         platformID = getPlatformId(platform)
         if ctx.message.guild.region == discord.VoiceRegion.brazil:
-            await ctx.channel.send("{0.mention}, Pesquisando o level de {1}.".format(ctx.message.author,nickname))
+            await ctx.channel.send("{0.mention}, Pesquisando o level de **{1}**.".format(ctx.message.author,nickname))
         else:
-            await ctx.channel.send("{0.mention}, Searching for {1}'s level.".format(ctx.message.author,nickname))
+            await ctx.channel.send("{0.mention}, Searching for **{1}'s** level.".format(ctx.message.author,nickname))
         
         headers = {
         "TRN-Api-Key": random.choice(trnApiKey)
@@ -91,9 +127,9 @@ async def check_level(ctx, platform, nickname):
         if "data" in json:
             level = int(json["data"]["stats"][0]["value"])
             if ctx.message.guild.region == discord.VoiceRegion.brazil:
-                await ctx.channel.send("{0.mention}, O level de {1} é {2}.".format(ctx.message.author,nickname,level))
+                await ctx.channel.send("{0.mention}, O level de **{1}** é **{2}**.".format(ctx.message.author,nickname,level))
             else:
-                await ctx.channel.send("{0.mention}, {1} is level {2}.".format(ctx.message.author,nickname,level))
+                await ctx.channel.send("{0.mention}, **{1}** is level **{2}**.".format(ctx.message.author,nickname,level))
         elif "errors" in json:
             await ctx.channel.send("{0.mention}, ".format(ctx.message.author)+json["errors"][0]["message"])
         else:
@@ -101,15 +137,14 @@ async def check_level(ctx, platform, nickname):
     else:
         await ctx.message.delete()
 
-
 @client.command(pass_context = True)
 async def check_kills(ctx, platform, nickname):
     if "level" in ctx.message.channel.name:
         platformID = getPlatformId(platform)
         if ctx.message.guild.region == discord.VoiceRegion.brazil:
-            await ctx.channel.send("{0.mention}, Pesquisando as kills de {1}.".format(ctx.message.author,nickname))
+            await ctx.channel.send("{0.mention}, Pesquisando as kills de **{1}**.".format(ctx.message.author,nickname))
         else:
-            await ctx.channel.send("{0.mention}, Searching for {1}'s kills.".format(ctx.message.author,nickname))
+            await ctx.channel.send("{0.mention}, Searching for **{1}'s** kills.".format(ctx.message.author,nickname))
         headers = {
         "TRN-Api-Key": random.choice(trnApiKey)
         }
@@ -119,9 +154,9 @@ async def check_kills(ctx, platform, nickname):
         if "data" in json:
             kills = int(json["data"]["stats"][1]["value"])
             if ctx.message.guild.region == discord.VoiceRegion.brazil:
-                await ctx.channel.send("{0.mention}, {1} tem {2} kills.".format(ctx.message.author,nickname,kills))
+                await ctx.channel.send("{0.mention}, **{1}** tem **{2}** kills.".format(ctx.message.author,nickname,kills))
             else:
-                await ctx.channel.send("{0.mention}, {1} has {2} kills.".format(ctx.message.author,nickname,kills))
+                await ctx.channel.send("{0.mention}, **{1}** has **{2}** kills.".format(ctx.message.author,nickname,kills))
         elif "errors" in json:
             await ctx.channel.send("{0.mention}, ".format(ctx.message.author)+json["errors"][0]["message"])
         else:

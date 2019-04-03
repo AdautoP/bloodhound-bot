@@ -39,6 +39,12 @@ def getLevelRoleToAdd(level,server):
                 if(level>= int(array[0]) and level <int(array[1])):
                     return i
 
+def getKillsRoleToAdd(killsPerLevel, server):
+    for i in server.roles:
+        if "K/L" in i.name:
+            return i
+    
+
 def getRolesToRemove(roles):
     rolesToRemove = []
     for role in roles:
@@ -56,7 +62,7 @@ def getPlatformId(platform):
     elif (platform == "ps4" or platform == "PS4"):
         return 2
 
-async def autorole(ctx,origin_nickname, platform):
+async def levelAutoRole(ctx,origin_nickname, platform):
     platformID = getPlatformId(platform)
     headers = {
     "TRN-Api-Key": random.choice(trnApiKey)
@@ -72,15 +78,15 @@ async def autorole(ctx,origin_nickname, platform):
         role = getLevelRoleToAdd(level,ctx.message.guild) #GETTING THE NEW ROLE BASED ON THE LEVEL THE MEMBER HAS NOW
         if ctx.message.guild.region == discord.VoiceRegion.brazil:
             embed = discord.Embed(
-                title = "{0.name}".format(ctx.message.author),
-                description = "Seu level é {0}, foi lhe dado o cargo {1.mention}.".format(level,role),
+                title = "**{0.name}**".format(ctx.message.author),
+                description = "Seu level é **{0}**, foi lhe dado o cargo {1.mention}.".format(level,role),
                 colour = discord.Colour.red()
             )
             await ctx.channel.send(embed = embed)
         else:
             embed = discord.Embed(
-                title = "{0.name}".format(ctx.message.author),
-                description = "Your level is {0}, it has been given you the {1.mention} role.".format(level,role),
+                title = "**{0.name}**".format(ctx.message.author),
+                description = "Your level is **{0}**, it has been given you the {1.mention} role.".format(level,role),
                 colour = discord.Colour.red()
             )
             await ctx.channel.send(embed = embed)
@@ -98,6 +104,59 @@ async def autorole(ctx,origin_nickname, platform):
                 await ctx.message.author.edit(nick = "{} {} {}".format(level,"★",ctx.message.author.nick))    
         except:
             await ctx.message.author.edit(nick = "{} {} {}".format(level,"★",ctx.message.author.name))
+    elif "errors" in json:
+        await ctx.channel.send(json["errors"][0]["message"])
+    else:
+        await ctx.channel.send(json["error"])
+
+
+
+async def killsAutoRole(ctx,origin_nickname, platform):
+    platformID = getPlatformId(platform)
+    headers = {
+    "TRN-Api-Key": random.choice(trnApiKey)
+    }
+
+    request = requests.get("{}{}/{}".format(getLevel,platformID,origin_nickname),headers=headers)
+    json = request.json()
+    if "data" in json:
+        level = int(json["data"]["stats"][0]["value"])
+        kills = int(json["data"]["stats"][1]["value"])
+        killsPerLevel = int(kills/level)
+        role = getKillsRoleToAdd(killsPerLevel, ctx.guild)
+        if killsPerLevel >= 10:
+            if ctx.message.guild.region == discord.VoiceRegion.brazil:
+                embed = discord.Embed(
+                    title = "**{0.name}**".format(ctx.message.author),
+                    description = "Você tem **{0}** K/L (**Kills por Level**), você é uma verdadeira lenda!  ".format(killsPerLevel),
+                    colour = discord.Colour.red()
+                )
+                embed.add_field(name = "**Parabéns!**", value = "Foi lhe dado o cargo {0.mention}:trophy:".format(role), inline = False)
+                await ctx.channel.send(embed = embed)
+            else:
+                embed = discord.Embed(
+                    title = "**{0.name}**".format(ctx.message.author),
+                    description = "You have **{0}** K/L (**Kills per Level**), you are a true legend!".format(killsPerLevel),
+                    colour = discord.Colour.red()
+                )
+                embed.add_field(name = "**Congratulations!**", value = "It has been assigned you the role {1.mention}:trophy:".format(role), inline = False)
+                await ctx.channel.send(embed = embed)
+            await ctx.message.author.add_roles(role) #ADDING THE NEW ROLE TO THE MEMBER
+        else:
+            if ctx.message.guild.region == discord.VoiceRegion.brazil:
+                embed = discord.Embed(
+                    title = "**{0.name}**".format(ctx.message.author),
+                    description = "Você tem **{0}** K/L (**Kills por Level**), você ainda não é uma lenda!".format(killsPerLevel),
+                    colour = discord.Colour.red()
+                )
+                await ctx.channel.send(embed = embed)
+            else:
+                embed = discord.Embed(
+                    title = "**{0.name}**".format(ctx.message.author),
+                    description = "You have **{0}** K/L (**Kills per Level**), you are not a legend yet!".format(killsPerLevel),
+                    colour = discord.Colour.red()
+                )
+                await ctx.channel.send(embed = embed)
     elif "errors" in json:
         await ctx.channel.send(json["errors"][0]["message"])
     else:
