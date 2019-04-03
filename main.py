@@ -111,57 +111,70 @@ async def kills(ctx, platform = "pc", nickname = None):
 
 
 @client.command(pass_context = True)
-async def check_level(ctx, platform, nickname):
+async def check_level(ctx, platform = None, nickname = None):
     if channelName in ctx.message.channel.name:
-        platformID = getPlatformId(platform)
-        if ctx.message.guild.region == discord.VoiceRegion.brazil:
-            await ctx.channel.send("{0.mention}, Pesquisando o level de **{1}**.".format(ctx.message.author,nickname))
-        else:
-            await ctx.channel.send("{0.mention}, Searching for **{1}'s** level.".format(ctx.message.author,nickname))
-        
-        headers = {
-        "TRN-Api-Key": random.choice(trnApiKey)
-        }
-
-        request = requests.get("{}{}/{}".format(getLevel,platformID,nickname),headers=headers)
-        json = request.json()
-        if "data" in json:
-            level = int(json["data"]["stats"][0]["value"])
+        if nickname is not None and platform is not None:
+            platformID = getPlatformId(platform)
             if ctx.message.guild.region == discord.VoiceRegion.brazil:
-                await ctx.channel.send("{0.mention}, O level de **{1}** é **{2}**.".format(ctx.message.author,nickname,level))
+                await ctx.channel.send("{0.mention}, Pesquisando o level de **{1}**.".format(ctx.message.author,nickname))
             else:
-                await ctx.channel.send("{0.mention}, **{1}** is level **{2}**.".format(ctx.message.author,nickname,level))
-        elif "errors" in json:
-            await ctx.channel.send("{0.mention}, ".format(ctx.message.author)+json["errors"][0]["message"])
+                await ctx.channel.send("{0.mention}, Searching for **{1}'s** level.".format(ctx.message.author,nickname))
+        
+            headers = {
+            "TRN-Api-Key": random.choice(trnApiKey)
+            }
+
+            request = requests.get("{}{}/{}".format(getLevel,platformID,nickname),headers=headers)
+            json = request.json()
+            if "data" in json:
+                level = int(json["data"]["stats"][0]["value"])
+                if ctx.message.guild.region == discord.VoiceRegion.brazil:
+                    await ctx.channel.send("{0.mention}, O level de **{1}** é **{2}**.".format(ctx.message.author,nickname,level))
+                else:
+                    await ctx.channel.send("{0.mention}, **{1}** is level **{2}**.".format(ctx.message.author,nickname,level))
+            elif "errors" in json:
+                await ctx.channel.send("{0.mention}, ".format(ctx.message.author)+json["errors"][0]["message"])
+            else:
+                await ctx.channel.send("{0.mention}, ".format(ctx.message.author)+json["error"])    
         else:
-             await ctx.channel.send("{0.mention}, ".format(ctx.message.author)+json["error"])
+            if ctx.message.guild.region == discord.VoiceRegion.brazil:
+                await ctx.channel.send("{0.mention}, Você esqueceu de passar os parâmetros corretos.".format(ctx.message.author))
+            else:
+                await ctx.channel.send("{0.mention}, You forgot to pass the right parameters.".format(ctx.message.author))
+
     else:
         await ctx.message.delete()
 
 @client.command(pass_context = True)
-async def check_kills(ctx, platform, nickname):
+async def check_kills(ctx, platform = None, nickname = None):
     if channelName in ctx.message.channel.name:
-        platformID = getPlatformId(platform)
-        if ctx.message.guild.region == discord.VoiceRegion.brazil:
-            await ctx.channel.send("{0.mention}, Pesquisando as kills de **{1}**.".format(ctx.message.author,nickname))
-        else:
-            await ctx.channel.send("{0.mention}, Searching for **{1}'s** kills.".format(ctx.message.author,nickname))
-        headers = {
-        "TRN-Api-Key": random.choice(trnApiKey)
-        }
-
-        request = requests.get("{}{}/{}".format(getLevel,platformID,nickname),headers=headers)
-        json = request.json()
-        if "data" in json:
-            kills = int(json["data"]["stats"][1]["value"])
+        if nickname is not None and platform is not None:
+            platformID = getPlatformId(platform)
             if ctx.message.guild.region == discord.VoiceRegion.brazil:
-                await ctx.channel.send("{0.mention}, **{1}** tem **{2}** kills.".format(ctx.message.author,nickname,kills))
+                await ctx.channel.send("{0.mention}, Pesquisando as kills de **{1}**.".format(ctx.message.author,nickname))
             else:
-                await ctx.channel.send("{0.mention}, **{1}** has **{2}** kills.".format(ctx.message.author,nickname,kills))
-        elif "errors" in json:
-            await ctx.channel.send("{0.mention}, ".format(ctx.message.author)+json["errors"][0]["message"])
+                await ctx.channel.send("{0.mention}, Searching for **{1}'s** kills.".format(ctx.message.author,nickname))
+            headers = {
+            "TRN-Api-Key": random.choice(trnApiKey)
+            }
+
+            request = requests.get("{}{}/{}".format(getLevel,platformID,nickname),headers=headers)
+            json = request.json()
+            if "data" in json:
+                kills = int(json["data"]["stats"][1]["value"])
+                if ctx.message.guild.region == discord.VoiceRegion.brazil:
+                    await ctx.channel.send("{0.mention}, **{1}** tem **{2}** kills.".format(ctx.message.author,nickname,kills))
+                else:
+                    await ctx.channel.send("{0.mention}, **{1}** has **{2}** kills.".format(ctx.message.author,nickname,kills))
+            elif "errors" in json:
+                await ctx.channel.send("{0.mention}, ".format(ctx.message.author)+json["errors"][0]["message"])
+            else:
+                await ctx.channel.send("{0.mention}, ".format(ctx.message.author)+json["error"])
         else:
-            await ctx.channel.send("{0.mention}, ".format(ctx.message.author)+json["error"])
+            if ctx.message.guild.region == discord.VoiceRegion.brazil:
+                await ctx.channel.send("{0.mention}, Você esqueceu de passar os parâmetros corretos.".format(ctx.message.author))
+            else:
+                await ctx.channel.send("{0.mention}, You forgot to pass the right parameters.".format(ctx.message.author))
     else:
         await ctx.message.delete()
         
