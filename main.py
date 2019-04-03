@@ -18,10 +18,39 @@ async def on_ready():
     print('------')
     await client.change_presence(status = discord.Status.idle, activity = discord.Game(name = "https://github.com/AdautoP/bloodhound-bot"))
 
-# @client.event
-# async def on_raw_reaction_add(payload):
-#     channel = client.get_channel(payload.channel_id)
-#     await channel.send("Emoji: {}".format(payload.emoji.name))
+@client.event
+async def on_raw_reaction_add(payload):
+    channel = client.get_channel(payload.channel_id)
+    guild = client.get_guild(payload.guild_id)
+    author = guild.get_member(payload.user_id)
+    if guild.region == discord.VoiceRegion.brazil:
+        if reactionChannelNameBrazil in channel.name:
+            for i in guild.roles:
+                if i.name == payload.emoji.name:
+                    await author.add_roles(i, reason = "Clicou na reaction de {}.".format(i.name))
+    else:
+        if reactionChannelNameEverywhere in channel.name:
+            for i in guild.roles:
+                if i.name == payload.emoji.name:
+                    await author.add_roles(i)
+
+@client.event
+async def on_raw_reaction_remove(payload):
+    channel = client.get_channel(payload.channel_id)
+    guild = client.get_guild(payload.guild_id)
+    author = guild.get_member(payload.user_id)
+    if guild.region == discord.VoiceRegion.brazil:
+        if reactionChannelNameBrazil in channel.name:
+            for i in guild.roles:
+                if i.name == payload.emoji.name:
+                    await author.remove_roles(i, reason = "Clicou na reaction de {}.".format(i.name))
+    else:
+        if reactionChannelNameEverywhere in channel.name:
+            for i in guild.roles:
+                if i.name == payload.emoji.name:
+                    await author.remove_roles(i)
+
+   
 
 @client.command(pass_context = True)
 async def register(ctx, platform, nickname):
