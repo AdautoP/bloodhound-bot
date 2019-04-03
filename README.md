@@ -7,6 +7,7 @@
 # Functions:
 * !register PLATFORM NICKNAME: Register your platform and nickname along your discord_id on the database, so you won't need to always type them again when auto-roling.
 * !lvl PLATFORM NICKNAME: Searchs for this Origin nickname, check it's level on apex, and autorole the message author with the related role. Also adds the level right next to the nickname. If you have registered your platform and nickname, you can use only !lvl.
+* !kills PLATFORM NICKNAME: Searchs for this Origin nickname, check it's kills on apex, tells how many kills and kills per level the message author has and autorole the message author with the related role.
 * !check_level PLATFORM NICKNAME: Searchs for this Origin nickname, check it's level on apex tells the level but doens't autorole
 * !check_kills PLATFORM NICKNAME: Searchs for this Origin nickname, check it's number of kills and tells it.
 * !list_commands: Help function, unfortunately i couldn't manage to override the help function, so i made another with different name.
