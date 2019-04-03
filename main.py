@@ -16,6 +16,7 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')
+    await client.change_presence(status = discord.Status.idle, activity = discord.Game(name = "https://github.com/AdautoP/bloodhound-bot"))
 
 # @client.event
 # async def on_raw_reaction_add(payload):
