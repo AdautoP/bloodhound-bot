@@ -5,6 +5,7 @@ import requests
 import pyrebase
 from functions import *
 from config import *
+import aiohttp
 
 
 client = commands.Bot(command_prefix = '!')
@@ -16,8 +17,8 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')
-    await client.change_presence(status = discord.Status.idle, activity = discord.Game(name = "https://github.com/AdautoP/bloodhound-bot"))
-
+    await client.change_presence(status = discord.Status.online, activity = discord.Game(name = "https://github.com/AdautoP/bloodhound-bot"))
+    
 @client.event
 async def on_raw_reaction_add(payload):
     channel = client.get_channel(payload.channel_id)
@@ -49,6 +50,21 @@ async def on_raw_reaction_remove(payload):
             for i in guild.roles:
                 if i.name == payload.emoji.name:
                     await author.remove_roles(i)
+
+@client.event
+async def on_guild_join():
+    data = {'server_count': len(client.guilds)}
+    api_url = 'https://discordbots.org/api/bots/' + str(client.user.id) + '/stats'
+    async with aiohttp.ClientSession() as session:
+        await session.post(api_url, data=data, headers=dblHeaders)
+
+@client.event
+async def on_guild_remove():
+    data = {'server_count': len(client.guilds)}
+    api_url = 'https://discordbots.org/api/bots/' + str(client.user.id) + '/stats'
+    async with aiohttp.ClientSession() as session:
+        await session.post(api_url, data=data, headers=dblHeaders)
+
 
    
 
