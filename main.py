@@ -69,14 +69,14 @@ async def register(ctx, platform, nickname):
 
 
 @client.command(pass_context = True)
-async def lvl(ctx, platform = "pc",nickname = None):
+async def lvl(ctx, platform = None,nickname = None):
     if channelName in ctx.message.channel.name:
         if ctx.message.guild.region == discord.VoiceRegion.brazil:
             await ctx.channel.send("{0.mention}, Pesquisando seu level".format(ctx.message.author))
         else:
             await ctx.channel.send("{0.mention}, Searching your level".format(ctx.message.author))
-        if nickname is not None:
-            await levelAutoRole(ctx,nickname,platform)    
+        if nickname is not None and platform is not None:
+            await levelAutoRole(ctx,nickname,platform)
         else:
             user = await getUser(ctx.message.author.id)
             print(user)
@@ -86,7 +86,7 @@ async def lvl(ctx, platform = "pc",nickname = None):
                 if ctx.message.guild.region == discord.VoiceRegion.brazil:
                     await ctx.channel.send("{0.mention}, Usuário não registrado.".format(ctx.message.author))
                     embed = discord.Embed(
-                        title = "Escreva esse comando para registrar seu nickname e plataforma:",
+                        title = "**Escreva esse comando para registrar seu nickname e plataforma:**",
                         description = "**!register PLATAFORMA NICKNAME**, Exemplo: !register pc NRG_dizzy",
                         colour = discord.Colour.red()
                     )
@@ -94,7 +94,7 @@ async def lvl(ctx, platform = "pc",nickname = None):
                 else:
                     await ctx.channel.send("{0.mention}, User not registered".format(ctx.message.author))
                     embed = discord.Embed(
-                        title = "Write this command to register your nickname and platform:",
+                        title = "**Write this command to register your nickname and platform:**",
                         description = "**!register PLATFORM NICKNAME**, Example: !register pc NRG_dizzy",
                         colour = discord.Colour.red()
                     )
@@ -121,7 +121,7 @@ async def kills(ctx, platform = "pc", nickname = None):
                 if ctx.message.guild.region == discord.VoiceRegion.brazil:
                     await ctx.channel.send("{0.mention}, Usuário não registrado.".format(ctx.message.author))
                     embed = discord.Embed(
-                        title = "Escreva esse comando para registrar seu nickname e plataforma:",
+                        title = "**Escreva esse comando para registrar seu nickname e plataforma:**",
                         description = "**!register PLATAFORMA NICKNAME**, Exemplo: !register pc NRG_dizzy",
                         colour = discord.Colour.red()
                     )
@@ -129,7 +129,7 @@ async def kills(ctx, platform = "pc", nickname = None):
                 else:
                     await ctx.channel.send("{0.mention}, User not registered".format(ctx.message.author))
                     embed = discord.Embed(
-                        title = "Write this command to register your nickname and platform:",
+                        title = "**Write this command to register your nickname and platform:**",
                         description = "**!register PLATFORM NICKNAME**, Example: !register pc NRG_dizzy",
                         colour = discord.Colour.red()
                     )

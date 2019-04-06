@@ -32,12 +32,17 @@ async def pushNewNickname(discord_id,origin_nickname,platform):
         #
 
 def getLevelRoleToAdd(level,server):
+    lastRoleValue = (0,None)
     for i in server.roles:
-        if("-" in i.name):
-            array = i.name.split("-")
-            if array[0].isdigit() and array[1].isdigit():
-                if(level>= int(array[0]) and level <int(array[1])):
-                    return i
+        if "+" in i.name and "K/L" not in i.name:
+            number = i.name.split("+")[0]
+            woSpace = number.split(" ")[0]
+            if woSpace.isdigit():
+                if level >= int(woSpace):
+                    if int(woSpace) >= lastRoleValue[0]:
+                        lastRoleValue = (int(woSpace),i)
+    return lastRoleValue[1]
+
 
 def getKillsRoleToAdd(killsPerLevel, server):
     for i in server.roles:
@@ -47,11 +52,12 @@ def getKillsRoleToAdd(killsPerLevel, server):
 
 def getRolesToRemove(roles):
     rolesToRemove = []
-    for role in roles:
-        if ("-" in role.name):
-            array = role.name.split("-")
-            if array[0].isdigit() and array[1].isdigit():
-                rolesToRemove.append(role)
+    for i in roles:
+        if "+" in i.name:
+            number = i.name.split("+")[0]
+            woSpace = number.split(" ")[0]
+            if woSpace.isdigit():
+                rolesToRemove.append(i)
     return rolesToRemove
 
 def getPlatformId(platform):
@@ -112,8 +118,8 @@ async def levelAutoRole(ctx,origin_nickname, platform):
                 nickAux = ctx.message.author.nick.split("★")
                 woSpace = nickAux[0].split(" ")
                 if woSpace[0].isdigit():
-                    woSpace = nickAux[1].split("")
-                    await ctx.message.author.edit(nick = "{} {} {}".format(level,"★",woSpace[0]))
+                    woSpace = nickAux[1].split(" ")
+                    await ctx.message.author.edit(nick = "{} {} {}".format(level,"★",woSpace[1]))
                 else:
                     await ctx.message.author.edit(nick = "{} {} {}".format(level ,"★",woSpace[0] ))
             else:
@@ -121,7 +127,10 @@ async def levelAutoRole(ctx,origin_nickname, platform):
         except:
             await ctx.message.author.edit(nick = "{} {} {}".format(level,"★",ctx.message.author.name))
     elif "errors" in json:
-        await ctx.channel.send(json["errors"][0]["message"])
+        if ctx.message.guild.region == discord.VoiceRegion.brazil:
+            await ctx.channel.send("Usuário não encontrado. Cheque se a plataforma e o nickname foram inseridos corretos.")
+        else:
+            await ctx.channel.send("User not found. Check if the platform and nickname were correctly inserted.")
     else:
         await ctx.channel.send(json["error"])
 
@@ -145,7 +154,7 @@ async def killsAutoRole(ctx,origin_nickname, platform):
                 if ctx.message.guild.region == discord.VoiceRegion.brazil:
                     embed = discord.Embed(
                         title = "**{0.name}**".format(ctx.message.author),
-                        description = "Você tem **{0}** K/L (**Kills por Level**), você é uma verdadeira lenda!  ".format(killsPerLevel),
+                        description = "Você tem **{0}** K/L (**Kills por Level**) e **{1}** kills, você é uma verdadeira lenda!  ".format(killsPerLevel, kills),
                         colour = discord.Colour.red()
                     )
                     embed.add_field(name = "**Parabéns!**", value = "Foi lhe dado o cargo {0.mention}:trophy:".format(role), inline = False)
@@ -153,7 +162,7 @@ async def killsAutoRole(ctx,origin_nickname, platform):
                 else:
                     embed = discord.Embed(
                         title = "**{0.name}**".format(ctx.message.author),
-                        description = "You have **{0}** K/L (**Kills per Level**), you are a true legend!".format(killsPerLevel),
+                        description = "You have **{0}** K/L (**Kills per Level**) and **{1}** kills, you are a true legend!".format(killsPerLevel,kills),
                         colour = discord.Colour.red()
                     )
                     embed.add_field(name = "**Congratulations!**", value = "It has been assigned you the role {1.mention}:trophy:".format(role), inline = False)
@@ -163,14 +172,14 @@ async def killsAutoRole(ctx,origin_nickname, platform):
                 if ctx.message.guild.region == discord.VoiceRegion.brazil:
                     embed = discord.Embed(
                         title = "**{0.name}**".format(ctx.message.author),
-                        description = "Você tem **{0}** K/L (**Kills por Level**), você ainda não é uma lenda!".format(killsPerLevel),
+                        description = "Você tem **{0}** K/L (**Kills por Level**) e **{1}** kills, você é uma lenda em ascenção!".format(killsPerLevel,kills),
                         colour = discord.Colour.red()
                     )
                     await ctx.channel.send(embed = embed)
                 else:
                     embed = discord.Embed(
                         title = "**{0.name}**".format(ctx.message.author),
-                        description = "You have **{0}** K/L (**Kills per Level**), you are not a legend yet!".format(killsPerLevel),
+                        description = "You have **{0}** K/L (**Kills per Level**) and **{1}** kills, you are a legend in ascension!".format(killsPerLevel,kills),
                         colour = discord.Colour.red()
                     )
                     await ctx.channel.send(embed = embed)
@@ -179,14 +188,14 @@ async def killsAutoRole(ctx,origin_nickname, platform):
                 if ctx.message.guild.region == discord.VoiceRegion.brazil:
                     embed = discord.Embed(
                         title = "**{0.name}**".format(ctx.message.author),
-                        description = "Você tem **{0}** K/L (**Kills por Level**), você é uma verdadeira lenda!  ".format(killsPerLevel),
+                        description = "Você tem **{0}** K/L (**Kills por Level**) e **{1}** kills, você é uma verdadeira lenda!  ".format(killsPerLevel,kills),
                         colour = discord.Colour.red()
                     )
                     await ctx.channel.send(embed = embed)
                 else:
                     embed = discord.Embed(
                         title = "**{0.name}**".format(ctx.message.author),
-                        description = "You have **{0}** K/L (**Kills per Level**), you are a true legend!".format(killsPerLevel),
+                        description = "You have **{0}** K/L (**Kills per Level**) and **{1}** kills, you are a true legend!".format(killsPerLevel,kills),
                         colour = discord.Colour.red()
                     )
                     await ctx.channel.send(embed = embed)
@@ -194,18 +203,21 @@ async def killsAutoRole(ctx,origin_nickname, platform):
                 if ctx.message.guild.region == discord.VoiceRegion.brazil:
                     embed = discord.Embed(
                         title = "**{0.name}**".format(ctx.message.author),
-                        description = "Você tem **{0}** K/L (**Kills por Level**), você ainda não é uma lenda!".format(killsPerLevel),
+                        description = "Você tem **{0}** K/L (**Kills por Level**) e **{1}** kills, você é uma lenda em ascenção!".format(killsPerLevel,kills),
                         colour = discord.Colour.red()
                     )
                     await ctx.channel.send(embed = embed)
                 else:
                     embed = discord.Embed(
                         title = "**{0.name}**".format(ctx.message.author),
-                        description = "You have **{0}** K/L (**Kills per Level**), you are not a legend yet!".format(killsPerLevel),
+                        description = "You have **{0}** K/L (**Kills per Level**) and {1} kills, you are a legend in ascension!".format(killsPerLevel,kills),
                         colour = discord.Colour.red()
                     )
                     await ctx.channel.send(embed = embed)
     elif "errors" in json:
-        await ctx.channel.send(json["errors"][0]["message"])
+        if ctx.message.guild.region == discord.VoiceRegion.brazil:
+            await ctx.channel.send("Usuário não encontrado. Cheque se a plataforma e o nickname foram inseridos corretos.")
+        else:
+            await ctx.channel.send("User not found. Check if the platform and nickname were correctly inserted.")
     else:
         await ctx.channel.send(json["error"])
