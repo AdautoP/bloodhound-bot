@@ -45,16 +45,33 @@ def getLevelRoleToAdd(level,server):
 
 
 def getKillsRoleToAdd(killsPerLevel, server):
+    lastKillRoleValue = (0, None)
     for i in server.roles:
-        if "K/L" in i.name:
-            return i
+        if "+ K/L" in i.name:
+            number = i.name.split("+ K/L")[0]
+            woSpace = number.split(" ")[0]
+            if woSpace.isdigit():
+                if killsPerLevel >= int(woSpace):
+                    if int(woSpace) >= lastKillRoleValue[0]:
+                        lastKillRoleValue = (int(woSpace),i)
+    return lastKillRoleValue[1]
     
 
-def getRolesToRemove(roles):
+def getLevelRolesToRemove(roles):
     rolesToRemove = []
     for i in roles:
-        if "+" in i.name:
+        if "+" in i.name and "K/L" not in i.name:
             number = i.name.split("+")[0]
+            woSpace = number.split(" ")[0]
+            if woSpace.isdigit():
+                rolesToRemove.append(i)
+    return rolesToRemove
+
+def getKillRolesToRemove(roles):
+    rolesToRemove = []
+    for i in roles:
+        if "K/L" in i.name:
+            number = i.name.split("+ K/L")[0]
             woSpace = number.split(" ")[0]
             if woSpace.isdigit():
                 rolesToRemove.append(i)
@@ -79,7 +96,7 @@ async def levelAutoRole(ctx,origin_nickname, platform):
     if "data" in json:
         level = int(json["data"]["stats"][0]["value"])
         memberRoles = ctx.message.author.roles #GETTING ALL THE ROLES THE MEMBER HAS
-        rolesToRemove = getRolesToRemove(memberRoles) #GETTING THE LEVEL RELATED ROLES THE MEMBER ALREADY HAVE TO REMOVE BEFORE GIVING NEW ONE
+        rolesToRemove = getLevelRolesToRemove(memberRoles) #GETTING THE LEVEL RELATED ROLES THE MEMBER ALREADY HAVE TO REMOVE BEFORE GIVING NEW ONE
         await ctx.message.author.remove_roles(*rolesToRemove) #REMOVING THE ROLE
         try:
             role = getLevelRoleToAdd(level,ctx.message.guild) #GETTING THE NEW ROLE BASED ON THE LEVEL THE MEMBER HAS NOW
@@ -144,9 +161,16 @@ async def killsAutoRole(ctx,origin_nickname, platform):
 
     request = requests.get("{}{}/{}".format(getLevel,platformID,origin_nickname),headers=headers)
     json = request.json()
+    
     if "data" in json:
+        memberRoles = ctx.message.author.roles #GETTING ALL THE ROLES THE MEMBER HAS
+        rolesToRemove = getKillRolesToRemove(memberRoles) #GETTING THE LEVEL RELATED ROLES THE MEMBER ALREADY HAVE TO REMOVE BEFORE GIVING NEW ONE
+        await ctx.message.author.remove_roles(*rolesToRemove) #REMOVING THE ROLE
         level = int(json["data"]["stats"][0]["value"])
-        kills = int(json["data"]["stats"][1]["value"])
+        if "Kills" in json["data"]["stats"][1]["name"]:
+            kills = int(json["data"]["stats"][1]["value"])
+        else:
+            kills = 0
         killsPerLevel = int(kills/level)
         try:
             role = getKillsRoleToAdd(killsPerLevel, ctx.guild)

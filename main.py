@@ -3,12 +3,73 @@ from discord.ext import commands
 import random
 import requests
 import pyrebase
+import asyncio
 from functions import *
 from config import *
 import aiohttp
 
 
 client = commands.Bot(command_prefix = '!')
+
+
+class Bot(commands.Cog):
+    def __init__(self,bot):
+        self.bot = bot
+        self.queueCount = 0
+        self.queuePlayers = []
+        self.startingCount = False
+
+    def my_after(self,ctx,voiceClient):
+        coro = voiceClient.disconnect()
+        fut = asyncio.run_coroutine_threadsafe(coro, client.loop)
+        try:
+            fut.result()
+            self.queuePlayers = []
+            self.startingCount = False
+            self.queueCount = 0
+        except:
+            # an error happened sending the message
+            pass
+
+    async def startCounting(self,ctx):
+        await ctx.channel.send("Contagem começando agora!")
+        for i in client.guilds:
+            for j in i.channels:
+                if "contagem" in j.name:
+                    print(j.name)
+                    voiceClient = await j.connect()
+                    source = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio("contagem.wav"))
+                    voiceClient.play(source, after= lambda e: self.my_after(ctx,voiceClient))
+
+    @commands.command(pass_context = True)
+    async def scrim(self,ctx):
+        if "start" in ctx.channel.name:
+            isConnected = False
+            for i in client.voice_clients:
+                if i.guild.id == ctx.guild.id:
+                    if i.isConnected() == True:
+                        isConnected = True
+
+            if isConnected == False:
+                if ctx.message.author not in self.queuePlayers:
+                    self.queueCount += 1
+                    self.queuePlayers.append(ctx.message.author)
+                    if self.queueCount >= 6 and self.startingCount == False:
+                        self.startingCounting = True
+                        await ctx.channel.send("A contagem começará em 30s.")
+                        await asyncio.sleep(15)
+                        await ctx.channel.send("A contagem começará em  15s")
+                        await asyncio.sleep(15)
+                        await self.startCounting(ctx)
+
+                    else:
+                        await ctx.channel.send("Já temos {}, faltam mais {}".format(self.queueCount,6-self.queueCount))
+                else:
+                    await ctx.channel.send("Você já se cadastrou, doido.")
+            else:
+                await ctx.channel.send("Ow, calma ai, tá rolando uma contagem agora!")
+        else:
+            await ctx.message.delete()
 
 
 @client.event
@@ -262,5 +323,6 @@ async def list_commands(ctx):
         embed.set_footer(text = "Bot made By Adauto Pinheiro, github: https://github.com/AdautoP")
 
     await ctx.channel.send(embed = embed)
-
+    
+client.add_cog(Bot(client))
 client.run(TOKEN)
