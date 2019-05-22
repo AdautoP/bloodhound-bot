@@ -167,7 +167,7 @@ async def killsAutoRole(ctx,origin_nickname, platform):
         rolesToRemove = getKillRolesToRemove(memberRoles) #GETTING THE LEVEL RELATED ROLES THE MEMBER ALREADY HAVE TO REMOVE BEFORE GIVING NEW ONE
         await ctx.message.author.remove_roles(*rolesToRemove) #REMOVING THE ROLE
         level = int(json["data"]["stats"][0]["value"])
-        if "Kills" in json["data"]["stats"][1]["name"]:
+        if "Kills" in json["data"]["stats"][1]["metadata"]["name"]:
             kills = int(json["data"]["stats"][1]["value"])
         else:
             kills = 0

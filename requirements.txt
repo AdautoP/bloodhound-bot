@@ -1,3 +1,6 @@
 requests
 pyrebase
--e git+https://github.com/Rapptz/discord.py@rewrite#egg=discord.py[voice]
+asyncio
+aiohttp
+youtube_dl
+discord.py[voice]
