@@ -153,7 +153,7 @@ async def register(ctx, platform, nickname):
 
 @client.command(pass_context = True)
 async def lvl(ctx, platform = None,nickname = None):
-    if channelName in ctx.message.channel.name:
+    if channelName in ctx.message.channel.name or "level" in ctx.message.channel.name:
         if ctx.message.guild.region == discord.VoiceRegion.brazil:
             await ctx.channel.send("{0.mention}, Pesquisando seu level".format(ctx.message.author))
         else:
@@ -188,7 +188,7 @@ async def lvl(ctx, platform = None,nickname = None):
 
 @client.command(pass_context = True)
 async def kills(ctx, platform = "pc", nickname = None):
-    if channelName in ctx.message.channel.name:
+    if channelName in ctx.message.channel.name or "level" in ctx.message.channel.name:
         if ctx.message.guild.region == discord.VoiceRegion.brazil:
             await ctx.channel.send("{0.mention}, Pesquisando suas kills.".format(ctx.message.author))
         else:
@@ -222,7 +222,7 @@ async def kills(ctx, platform = "pc", nickname = None):
         
 @client.command(pass_context = True)
 async def rank(ctx, platform = "pc", nickname = None):
-    if channelName in ctx.message.channel.name:
+    if channelName in ctx.message.channel.name or "level" in ctx.message.channel.name:
         if ctx.message.guild.region == discord.VoiceRegion.brazil:
             await ctx.channel.send("{0.mention}, Pesquisando seu rank.".format(ctx.message.author))
         else:
@@ -258,7 +258,7 @@ async def rank(ctx, platform = "pc", nickname = None):
 
 @client.command(pass_context = True)
 async def check_level(ctx, platform = None, nickname = None):
-    if channelName in ctx.message.channel.name:
+    if channelName in ctx.message.channel.name or "level" in ctx.message.channel.name:
         if nickname is not None and platform is not None:
             platformID = getPlatformId(platform)
             if ctx.message.guild.region == discord.VoiceRegion.brazil:
@@ -293,7 +293,7 @@ async def check_level(ctx, platform = None, nickname = None):
 
 @client.command(pass_context = True)
 async def check_kills(ctx, platform = None, nickname = None):
-    if channelName in ctx.message.channel.name:
+    if channelName in ctx.message.channel.name or "level" in ctx.message.channel.name:
         if nickname is not None and platform is not None:
             platformID = getPlatformId(platform)
             if ctx.message.guild.region == discord.VoiceRegion.brazil:
@@ -338,6 +338,8 @@ async def list_commands(ctx):
         embed.add_field(name = "Exemplo:", value = "!lvl pc NRG_dizzy **OU APENAS** !lvl",inline = False)
         embed.add_field(name = "!kills", value = "Pesquisa pelo seu nick da Origin e te dá o cargo referente ao seu K/L atual no Apex. Se você já tiver registrado seu nickname e plataforma, pode usar apenas !kills.",inline = False)
         embed.add_field(name = "Exemplo:", value = "!kills pc NRG_dizzy **OU APENAS** !kills",inline = False)
+        embed.add_field(name = "!rank", value = "Pesquisa pelo seu nick da Origin e te dá o cargo referente ao seu rank atual no Apex. Se você já tiver registrado seu nickname e plataforma, pode usar apenas !kills.",inline = False)
+        embed.add_field(name = "Exemplo:", value = "!rank pc NRG_dizzy **OU APENAS** !rank",inline = False)
         embed.add_field(name = "!check_level", value = "Pesquisa pelo nick da Origin e diz o level atual no Apex.",inline = False)
         embed.add_field(name = "Exemplo:", value = "!check_level pc NRG_dizzy",inline = False)
         embed.add_field(name = "!check_kills", value = "Pesquisa pelo nick da Origin e diz o número de kills no Apex.",inline = False)
@@ -355,6 +357,8 @@ async def list_commands(ctx):
         embed.add_field(name = "Example:", value = "!lvl pc NRG_dizzy **OR JUST** !lvl",inline = False)
         embed.add_field(name = "!kills", value = "Searchs for your Origin nickname and gives you the role related to your K/L in Apex. If you have registered your nickname and platform previously, you can use just !kills.",inline = False)
         embed.add_field(name = "Example:", value = "!kills pc NRG_dizzy **OR JUST** !kills",inline = False)
+        embed.add_field(name = "!rank", value = "Searchs for your Origin nickname and gives you the role related to your rank in Apex. If you have registered your nickname and platform previously, you can use just !kills.",inline = False)
+        embed.add_field(name = "Example:", value = "!rank pc NRG_dizzy **OR JUST** !rank",inline = False)
         embed.add_field(name = "!check_level", value = "Searchs for on Origin nickname and tells the actual level.",inline = False)
         embed.add_field(name = "Example:", value = "!check_level pc NRG_dizzy",inline = False)
         embed.add_field(name = "!check_kills", value = "Searchs for on Origin nickname and tells the amount of kills.",inline = False)
