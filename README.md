@@ -1,5 +1,5 @@
 # If you just want to use my bot on your server:
-* Create one channel with "level" (without commas) in it's name. My bot only accepts commands sent in channels that contains level in it's name, commands in other channels will be deleted automatically(If you give it permissions to see and delete messages in the other channels ofc).
+* Create one channel with "stats" (without commas) in it's name. My bot only accepts commands sent in channels that contains stats in it's name, commands in other channels will be deleted automatically(If you give it permissions to see and delete messages in the other channels ofc).
 * (Optional) Create roles for level ranges, so the !lvl command will auto-role on your server too. You can create any level range roles, but they should be formatted as X+ being X the numbers of the levels. (Example of role names: 10+, 50+, 150+)
 * (Optional) Create roles for kills, so the !kills command will auto-role on your server too. You can create any kills roles, but they should be formatted as "X+ K/L" being X the numbers of the kills. (Example of role names: 10+ K/L, 15+ K/L, 20+ K/L)
 * (Optional) Create roles for rank, so the !rank command will auto-role on your server too. The roles should be in this format: Bronze IV, Bronze III... Platinum IV, Platinum III etc.
