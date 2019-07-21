@@ -55,6 +55,18 @@ def getKillsRoleToAdd(killsPerLevel, server):
                     if int(woSpace) >= lastKillRoleValue[0]:
                         lastKillRoleValue = (int(woSpace),i)
     return lastKillRoleValue[1]
+
+def getRankRoleToAdd(rankScore, server):
+    lastRankRoleValue = (0, "None", "None")
+    roleToReturn = None
+    for i in ranks:
+        if rankScore >= i[0]:
+            if i[0] >= lastRankRoleValue[0]:
+                lastRankRoleValue = i
+    for j in server.roles:
+        if j.name == lastRankRoleValue[1] or j.name == lastRankRoleValue[2]:
+            roleToReturn = j
+    return roleToReturn
     
 
 def getLevelRolesToRemove(roles):
@@ -75,6 +87,13 @@ def getKillRolesToRemove(roles):
             woSpace = number.split(" ")[0]
             if woSpace.isdigit():
                 rolesToRemove.append(i)
+    return rolesToRemove
+
+def getRankRolesToRemove(roles):
+    rolesToRemove = []
+    for i in roles:
+        if ("IV" or "III" or "II" or "I" or "Preda") in i.name :
+            rolesToRemove.append(i)
     return rolesToRemove
 
 def getPlatformId(platform):
@@ -191,7 +210,6 @@ async def killsAutoRole(ctx,origin_nickname, platform):
                     )
                     embed.add_field(name = "**Congratulations!**", value = "It has been assigned you the role {1.mention}:trophy:".format(role), inline = False)
                     await ctx.channel.send(embed = embed)
-                await ctx.message.author.add_roles(role) #ADDING THE NEW ROLE TO THE MEMBER
             else:
                 if ctx.message.guild.region == discord.VoiceRegion.brazil:
                     embed = discord.Embed(
@@ -199,6 +217,7 @@ async def killsAutoRole(ctx,origin_nickname, platform):
                         description = "Você tem **{0}** K/L (**Kills por Level**) e **{1}** kills, você é uma lenda em ascenção!".format(killsPerLevel,kills),
                         colour = discord.Colour.red()
                     )
+                    embed.add_field(name = "**Parabéns!**", value = "Foi lhe dado o cargo {0.mention}:trophy:".format(role), inline = False)
                     await ctx.channel.send(embed = embed)
                 else:
                     embed = discord.Embed(
@@ -206,7 +225,9 @@ async def killsAutoRole(ctx,origin_nickname, platform):
                         description = "You have **{0}** K/L (**Kills per Level**) and **{1}** kills, you are a legend in ascension!".format(killsPerLevel,kills),
                         colour = discord.Colour.red()
                     )
+                    embed.add_field(name = "**Congratulations!**", value = "It has been assigned you the role {1.mention}:trophy:".format(role), inline = False)
                     await ctx.channel.send(embed = embed)
+            await ctx.message.author.add_roles(role) #ADDING THE NEW ROLE TO THE MEMBER
         except:
             if killsPerLevel >= 10:
                 if ctx.message.guild.region == discord.VoiceRegion.brazil:
@@ -238,6 +259,63 @@ async def killsAutoRole(ctx,origin_nickname, platform):
                         colour = discord.Colour.red()
                     )
                     await ctx.channel.send(embed = embed)
+    elif "errors" in json:
+        if ctx.message.guild.region == discord.VoiceRegion.brazil:
+            await ctx.channel.send("Usuário não encontrado. Cheque se a plataforma e o nickname foram inseridos corretos.")
+        else:
+            await ctx.channel.send("User not found. Check if the platform and nickname were correctly inserted.")
+    else:
+        await ctx.channel.send(json["error"])
+
+
+async def rankAutoRole(ctx,origin_nickname, platform):
+    platformID = getPlatformId(platform)
+    headers = {
+    "TRN-Api-Key": random.choice(trnApiKey)
+    }
+
+    request = requests.get("{}{}/{}".format(getLevel,platformID,origin_nickname),headers=headers)
+    json = request.json()
+    
+    if "data" in json:
+        memberRoles = ctx.message.author.roles #GETTING ALL THE ROLES THE MEMBER HAS
+        rolesToRemove = getRankRolesToRemove(memberRoles) #GETTING THE LEVEL RELATED ROLES THE MEMBER ALREADY HAVE TO REMOVE BEFORE GIVING NEW ONE
+        await ctx.message.author.remove_roles(*rolesToRemove) #REMOVING THE ROLE
+        rankScore = int(json["data"]["stats"][-1]["value"])
+        try:
+            role = getRankRoleToAdd(rankScore, ctx.guild)
+            if ctx.message.guild.region == discord.VoiceRegion.brazil:
+                embed = discord.Embed(
+                    title = "**{0.name}**".format(ctx.message.author),
+                    description = "Você tem **{0}** ranked score.".format(rankScore),
+                    colour = discord.Colour.red()
+                )
+                embed.add_field(name = "**Parabéns!**", value = "Foi lhe dado o cargo {0.mention}:trophy:".format(role), inline = False)
+                await ctx.channel.send(embed = embed)
+            else:
+                embed = discord.Embed(
+                    title = "**{0.name}**".format(ctx.message.author),
+                    description = "You have **{0}** ranked score.".format(rankScore),
+                    colour = discord.Colour.red()
+                )
+                embed.add_field(name = "**Congratulations!**", value = "It has been assigned you the role {1.mention}:trophy:".format(role), inline = False)
+                await ctx.channel.send(embed = embed)
+            await ctx.message.author.add_roles(role) #ADDING THE NEW ROLE TO THE MEMBER
+        except:
+            if ctx.message.guild.region == discord.VoiceRegion.brazil:
+                embed = discord.Embed(
+                    title = "**{0.name}**".format(ctx.message.author),
+                    description = "Você tem **{0}** ranked score.".format(rankScore),
+                    colour = discord.Colour.red()
+                )
+                await ctx.channel.send(embed = embed)
+            else:
+                embed = discord.Embed(
+                    title = "**{0.name}**".format(ctx.message.author),
+                    description = "You have **{0}** ranked score.".format(rankScore),
+                    colour = discord.Colour.red()
+                )
+                await ctx.channel.send(embed = embed)
     elif "errors" in json:
         if ctx.message.guild.region == discord.VoiceRegion.brazil:
             await ctx.channel.send("Usuário não encontrado. Cheque se a plataforma e o nickname foram inseridos corretos.")

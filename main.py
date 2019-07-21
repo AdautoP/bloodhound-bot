@@ -6,6 +6,10 @@ import pyrebase
 import asyncio
 from functions import *
 from config import *
+from PIL import Image
+from PIL import ImageOps
+from pytesseract import image_to_string
+from io import BytesIO
 import aiohttp
 
 
@@ -79,7 +83,9 @@ async def on_ready():
     print(client.user.id)
     print('------')
     await client.change_presence(status = discord.Status.online, activity = discord.Game(name = "https://github.com/AdautoP/bloodhound-bot"))
-    
+                
+                
+
 @client.event
 async def on_raw_reaction_add(payload):
     channel = client.get_channel(payload.channel_id)
@@ -213,6 +219,40 @@ async def kills(ctx, platform = "pc", nickname = None):
                     await ctx.channel.send(embed = embed)
     else:
         await ctx.message.delete()
+        
+@client.command(pass_context = True)
+async def rank(ctx, platform = "pc", nickname = None):
+    if channelName in ctx.message.channel.name:
+        if ctx.message.guild.region == discord.VoiceRegion.brazil:
+            await ctx.channel.send("{0.mention}, Pesquisando seu rank.".format(ctx.message.author))
+        else:
+            await ctx.channel.send("{0.mention}, Searching your rank.".format(ctx.message.author))
+        if nickname is not None:
+            await rankAutoRole(ctx,nickname,platform)    
+        else:
+            user = await getUser(ctx.message.author.id)
+            print(user)
+            if user is not None:
+                await rankAutoRole(ctx,user["origin_nickname"],user["platform"])
+            else:
+                if ctx.message.guild.region == discord.VoiceRegion.brazil:
+                    await ctx.channel.send("{0.mention}, Usuário não registrado.".format(ctx.message.author))
+                    embed = discord.Embed(
+                        title = "**Escreva esse comando para registrar seu nickname e plataforma:**",
+                        description = "**!register PLATAFORMA NICKNAME**, Exemplo: !register pc NRG_dizzy",
+                        colour = discord.Colour.red()
+                    )
+                    await ctx.channel.send(embed = embed)
+                else:
+                    await ctx.channel.send("{0.mention}, User not registered".format(ctx.message.author))
+                    embed = discord.Embed(
+                        title = "**Write this command to register your nickname and platform:**",
+                        description = "**!register PLATFORM NICKNAME**, Example: !register pc NRG_dizzy",
+                        colour = discord.Colour.red()
+                    )
+                    await ctx.channel.send(embed = embed)
+    else:
+        await ctx.message.delete()
 
 
 
@@ -283,7 +323,6 @@ async def check_kills(ctx, platform = None, nickname = None):
                 await ctx.channel.send("{0.mention}, You forgot to pass the right parameters.".format(ctx.message.author))
     else:
         await ctx.message.delete()
-        
 
 @client.command(pass_context = True)
 async def list_commands(ctx):
