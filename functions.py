@@ -92,8 +92,9 @@ def getKillRolesToRemove(roles):
 def getRankRolesToRemove(roles):
     rolesToRemove = []
     for i in roles:
-        if ("IV" or "III" or "II" or "I" or "Preda") in i.name :
-            rolesToRemove.append(i)
+        for j in ranks:
+            if i.name == j[1] or i.name == j[2]:
+                rolesToRemove.append(i)
     return rolesToRemove
 
 def getPlatformId(platform):
