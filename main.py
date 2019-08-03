@@ -137,7 +137,7 @@ async def on_guild_remove():
 
 @client.command(pass_context = True)
 async def register(ctx, platform, nickname):
-    if channelName in ctx.message.channel.name:
+    if channelName in ctx.message.channel.name or "level" in ctx.message.channel.name:
         if ctx.message.guild.region == discord.VoiceRegion.brazil:
             await ctx.channel.send("{0.mention}, Registrando seu nickname e plataforma no banco de dados para uso futuro.".format(ctx.message.author))
         else:
