@@ -6,9 +6,6 @@ import pyrebase
 import asyncio
 from functions import *
 from config import *
-from PIL import Image
-from PIL import ImageOps
-from pytesseract import image_to_string
 from io import BytesIO
 import aiohttp
 
@@ -82,6 +79,16 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')
+    # for guild in client.guilds:
+    #     if guild.id == 542501711860727848:
+    #         # print(guild.name)
+    #         for member in guild.members:
+    #             # print(member.name)
+    #             for role in member.roles:
+    #                 if "Prata" in role.name or "Ouro" in role.name or "Platina" in role.name or "Diamante" in role.name or "Predador" in role.name:  
+    #                     await member.remove_roles(role, reason = "Resetting Rank Roles")
+    #                     print("removendo {} de {}".format(role.name, member.name))
+
     await client.change_presence(status = discord.Status.online, activity = discord.Game(name = "https://github.com/AdautoP/bloodhound-bot"))
                 
                 

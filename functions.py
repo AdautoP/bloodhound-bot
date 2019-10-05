@@ -282,7 +282,13 @@ async def rankAutoRole(ctx,origin_nickname, platform):
         memberRoles = ctx.message.author.roles #GETTING ALL THE ROLES THE MEMBER HAS
         rolesToRemove = getRankRolesToRemove(memberRoles) #GETTING THE LEVEL RELATED ROLES THE MEMBER ALREADY HAVE TO REMOVE BEFORE GIVING NEW ONE
         await ctx.message.author.remove_roles(*rolesToRemove) #REMOVING THE ROLE
-        rankScore = int(json["data"]["stats"][-1]["value"])
+
+        if "Rank Score" in json["data"]["stats"][-1]["metadata"]["name"]:
+            rankScore = int(json["data"]["stats"][-1]["value"])
+        elif "Rank Score" in json["data"]["stats"][-2]["metadata"]["name"]:
+            rankScore = int(json["data"]["stats"][-2]["value"])
+        else:
+            rankScore = 0
         try:
             role = getRankRoleToAdd(rankScore, ctx.guild)
             if ctx.message.guild.region == discord.VoiceRegion.brazil:
