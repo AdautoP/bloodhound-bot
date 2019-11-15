@@ -139,6 +139,20 @@ async def on_guild_remove():
     async with aiohttp.ClientSession() as session:
         await session.post(api_url, data=data, headers=dblHeaders)
 
+@client.event
+async def on_voice_state_update(member, before, after):
+    if after.channel != None and member.guild.id == 542501711860727848:
+        if after.channel.id == 594568609586741248:
+            category = client.get_channel(644915283311722516)
+            channel = await member.guild.create_voice_channel(name = "{0.name}'s channel.".format(member), category = category)
+            await channel.edit(user_limit = 3)
+            await member.move_to(channel)
+            await channel.set_permissions(client.user, connect=True,read_messages=True, )
+            def check(a,b,c):
+                return len(channel.members) == 0
+            await client.wait_for('voice_state_update', check=check)
+            await channel.delete()
+            
 
    
 
