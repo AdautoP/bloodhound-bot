@@ -29,9 +29,10 @@ ranks = [(0,"Bronze IV","Bronze IV"),
         (4800,"Platina IV", "Platinum IV"),
         (5400,"Platina III", "Platinum III"),
         (6000,"Platina II", "Platinum II"),
-        (6000,"Platina I", "Platinum I"),
+        (6600,"Platina I", "Platinum I"),
         (7200,"Diamante IV", "Diamond IV"),
         (7900,"Diamante III", "Diamond III"),
         (8600,"Diamante II", "Diamond II"),
         (9300,"Diamante I", "Diamond I"),
-        (10000,"Predador", "Predator"),]
+        (10000,"Master", "Mestre"),
+        (-1, "Predator", "Predador")]

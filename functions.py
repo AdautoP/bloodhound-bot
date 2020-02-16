@@ -63,6 +63,8 @@ def getRankRoleToAdd(rankScore, server):
         if rankScore >= i[0]:
             if i[0] >= lastRankRoleValue[0]:
                 lastRankRoleValue = i
+    if rankScore == -1:
+        lastRankRoleValue = (-1, "Predator", "Predador")
     for j in server.roles:
         if j.name == lastRankRoleValue[1] or j.name == lastRankRoleValue[2]:
             roleToReturn = j
@@ -96,6 +98,31 @@ def getRankRolesToRemove(roles):
             if i.name == j[1] or i.name == j[2]:
                 rolesToRemove.append(i)
     return rolesToRemove
+
+def checkRankScore(stats):
+    aux = False
+    for i in stats:
+        if "Rank Score" in i["metadata"]["name"]:
+            rankScore = int(i["value"])
+            if rankScore > 10000 and checkSeasonRank(stats) <=500:
+                rankScore = -1
+            aux = True
+    if aux == False :
+        rankScore = 0
+    return rankScore
+
+def checkSeasonRank(stats):
+    biggestSeasonValue = 0
+    for i in stats:
+        metadataName = i["metadata"]["name"]
+        if "Season" in metadataName and "Wins" in metadataName:
+            value = int(metadataName.split("Season")[1].split("Wins")[0])
+            if value > biggestSeasonValue:
+                biggestSeasonValue = value
+                stat = i
+    return i["rank"]
+
+
 
 def getPlatformId(platform):
     if(platform == "pc" or platform == "PC"):
@@ -283,12 +310,8 @@ async def rankAutoRole(ctx,origin_nickname, platform):
         rolesToRemove = getRankRolesToRemove(memberRoles) #GETTING THE LEVEL RELATED ROLES THE MEMBER ALREADY HAVE TO REMOVE BEFORE GIVING NEW ONE
         await ctx.message.author.remove_roles(*rolesToRemove) #REMOVING THE ROLE
 
-        if "Rank Score" in json["data"]["stats"][-1]["metadata"]["name"]:
-            rankScore = int(json["data"]["stats"][-1]["value"])
-        elif "Rank Score" in json["data"]["stats"][-2]["metadata"]["name"]:
-            rankScore = int(json["data"]["stats"][-2]["value"])
-        else:
-            rankScore = 0
+        rankScore = checkRankScore(json["data"]["stats"])
+
         try:
             role = getRankRoleToAdd(rankScore, ctx.guild)
             if ctx.message.guild.region == discord.VoiceRegion.brazil:
