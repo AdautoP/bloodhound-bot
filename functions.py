@@ -68,6 +68,7 @@ def getRankRoleToAdd(rankScore, server):
     for j in server.roles:
         if j.name == lastRankRoleValue[1] or j.name == lastRankRoleValue[2]:
             roleToReturn = j
+    print("found role to return : {}".format(roleToReturn))
     return roleToReturn
     
 
@@ -236,7 +237,7 @@ async def killsAutoRole(ctx,origin_nickname, platform):
                         description = "You have **{0}** K/L (**Kills per Level**) and **{1}** kills, you are a true legend!".format(killsPerLevel,kills),
                         colour = discord.Colour.red()
                     )
-                    embed.add_field(name = "**Congratulations!**", value = "It has been assigned you the role {1.mention}:trophy:".format(role), inline = False)
+                    embed.add_field(name = "**Congratulations!**", value = "It has been assigned you the role {0.mention}:trophy:".format(role), inline = False)
                     await ctx.channel.send(embed = embed)
             else:
                 if ctx.message.guild.region == discord.VoiceRegion.brazil:
@@ -253,7 +254,7 @@ async def killsAutoRole(ctx,origin_nickname, platform):
                         description = "You have **{0}** K/L (**Kills per Level**) and **{1}** kills, you are a legend in ascension!".format(killsPerLevel,kills),
                         colour = discord.Colour.red()
                     )
-                    embed.add_field(name = "**Congratulations!**", value = "It has been assigned you the role {1.mention}:trophy:".format(role), inline = False)
+                    embed.add_field(name = "**Congratulations!**", value = "It has been assigned you the role {0.mention}:trophy:".format(role), inline = False)
                     await ctx.channel.send(embed = embed)
             await ctx.message.author.add_roles(role) #ADDING THE NEW ROLE TO THE MEMBER
         except:
@@ -313,7 +314,9 @@ async def rankAutoRole(ctx,origin_nickname, platform):
         rankScore = checkRankScore(json["data"]["stats"])
 
         try:
+            print("will try to get role")
             role = getRankRoleToAdd(rankScore, ctx.guild)
+            print("did get role: {}".format(role))
             if ctx.message.guild.region == discord.VoiceRegion.brazil:
                 embed = discord.Embed(
                     title = "**{0.name}**".format(ctx.message.author),
@@ -328,7 +331,7 @@ async def rankAutoRole(ctx,origin_nickname, platform):
                     description = "You have **{0}** ranked score.".format(rankScore),
                     colour = discord.Colour.red()
                 )
-                embed.add_field(name = "**Congratulations!**", value = "It has been assigned you the role {1.mention}:trophy:".format(role), inline = False)
+                embed.add_field(name = "**Congratulations!**", value = "It has been assigned you the role {0.mention}:trophy:".format(role), inline = False)
                 await ctx.channel.send(embed = embed)
             await ctx.message.author.add_roles(role) #ADDING THE NEW ROLE TO THE MEMBER
         except:
