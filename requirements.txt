@@ -5,4 +5,4 @@ aiohttp
 youtube_dl
 pytesseract
 Pillow
-discord.py[voice]==1.2.5
+discord.py[voice]
